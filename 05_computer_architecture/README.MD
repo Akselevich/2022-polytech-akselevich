@@ -1,4 +1,4 @@
-System Idle Process || tasklist
+System Idle Process || tasklist sort-Object -property память
 
 253735              || get-process powershell
 

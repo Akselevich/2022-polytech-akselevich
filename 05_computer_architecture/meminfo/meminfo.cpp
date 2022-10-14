@@ -1,40 +1,42 @@
-#include <iostream>
-#include <fstream>
-#include <string>
+// Проще всего запускать программу через onlinegdb.com
+//в файле meminfo данные содержатся в формате (ИмяПеременной: значение) 
+#include <iostream> //подключаем библиотеку ввода-вывода
+#include <fstream> //подключаем библиотеку для работы с файлами
+#include <string> //подключаем библиотеку для работы с файлами типа string (строка)
 
-int check_memory() {
-    std::ifstream sysData("/proc/meminfo");
-    if (!sysData.is_open())
+int check_memory() {                          //фукнция, которая считывает необходимые данные из файла и возвращает количество процентов загрузки памяти
+    std::ifstream sysData("/proc/meminfo");   //открываем файл, в котором содержится вся информация по памяти 
+    if (!sysData.is_open())                   //проверка на то, что файл открыт (в случае, если нет возвращается значение -1
         return -1;
-    else {
-        std::string temp;
-        int MemTotal, MemFree;
-        while (!sysData.eof()) {
-            sysData >> temp;
-            if (temp == "MemTotal:")
-                sysData >> MemTotal;
-            if (temp == "MemFree:") {
+    else {                                    //если же все ок, то
+        std::string temp;                     //инициализируем переменную, в которую будем считывать название получаемых данных
+        int MemTotal, MemFree;                //И две переменных, в которые будем считывать значнения общего количества памяти и количества свободной памяти
+        while (!sysData.eof()) {              //Выполняем цикл, пока файл не закончится
+            sysData >> temp;                  //Считываем название текущего значения
+            if (temp == "MemTotal:")          //Если это общее количество памяти, то
+                sysData >> MemTotal;          //записываем его значние в соответствующую переменную
+            if (temp == "MemFree:") {         //И аналогично с количеством свободной памяти
                 sysData >> MemFree;
-                break;
+                break;                        //Все нужные зачения мы получили, дальше их хранить смысла нет
             }
         }
-        return 100 - MemFree / (MemTotal / 100);
+        return 100 - MemFree / (MemTotal / 100); //конвертируем значения в количество процентов и возвращаем его
     }
 }
 
-void out(int percent) {
-    int i = 0;
-    for (i; i < percent / 10; i++) {
-        std::cout << "|";
+void out(int percent) { //функция для вывода на экран ASCII бара
+    int i = 0;                          //объявляем переменную-счетчик сразу для двух счетчиков
+    for (i; i < percent / 10; i++) {    //до тех пор пока i меньше количества_процентов/10 (после вывода каждого символа увеличиваем i на 1)
+        std::cout << "|";               //выводим палочку
     }
-    for (i; i < 10; i++) {
-        std::cout << ".";
+    for (i; i < 10; i++) {              //i у нас остается со значением, записанным в переменную в прошлом цикле
+        std::cout << ".";               //поэтому остаток выводим точки
     }
-    std::cout << " " << percent << std::endl;
+    std::cout << " " << percent << std::endl;   //а потом общее количество процентов для наглядности
 }
 
-int main()
+int main() //main
 {
-    out(check_memory());
-    return 0;
+    out(check_memory()); //вызываем переменную вывода значений, в качестве аргумента указываем результат работы первой функции check_memory() 
+    return 0; 
 }
